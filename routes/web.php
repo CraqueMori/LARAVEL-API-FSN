@@ -20,7 +20,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('dashboard', [
+        'clientes' => \App\Models\Cliente::all(),
+        'users' => \App\Models\User::all()
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -30,7 +33,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/users-index', [UserController::class, 'index'])->name('users.index');
     Route::get('/users-edit/{id}',  [UserController::class, 'edit'])->name('users.edit');
-    Route::put('/edit-update/{id}',  [UserController::class, 'upd ate'])->name('users.update');
+    Route::put('/edit-update/{id}',  [UserController::class, 'update'])->name('users.update');
+    Route::resources([
+        //utilizando resources, o nome da rota será "nome":controller, e o método do controleer será as rotas.
+        'cliente'=> \App\Http\Controllers\ClienteController::class
+
+    ]);
+    Route::get('/confirma-delete/{id}', [\App\Http\Controllers\ClienteController::class, 'confirma_delete'])->name('confirma.delete');
+    Route::get('/meus-clientes/{id}', [\App\Http\Controllers\ClienteController::class, 'meus_clientes'])->name('meus.clientes');
 });
 
 require __DIR__.'/auth.php';
